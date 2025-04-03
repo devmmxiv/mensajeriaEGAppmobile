@@ -20,6 +20,7 @@ class Municipio {
     Municipio(id: 6, nombre: 'Villa Canales'), //, code: '1'),
     Municipio(id: 7, nombre: 'Villa Nueva'), //, code: '1'),
     Municipio(id: 8, nombre: 'Mixco'), // code: '8'),
-    Municipio(id: 9, nombre: 'Fraijanes'), //, code: '1'),
+    Municipio(id: 9, nombre: 'CAES'), //, code: '1'),
+     Municipio(id: 10, nombre: 'Boca del Monte'),
   ];
 }

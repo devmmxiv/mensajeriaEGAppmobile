@@ -1,1 +1,3 @@
-enum TipoPago { efectivo, transferencia, tarjeta, yapagado }
+enum TipoPago {
+   // ignore: constant_identifier_names
+   EFECTIVO, TRANSFERENCIA, TARJETA, YA_PAGADO }

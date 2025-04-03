@@ -37,7 +37,7 @@ class _SavePageState extends State<SavePage> {
   final _formKey = GlobalKey<FormState>();
   final _scafoldKey = GlobalKey<ScaffoldState>();
   String tipopagoValue = "";
-  TipoPago t = TipoPago.efectivo;
+  TipoPago t = TipoPago.EFECTIVO;
   Future<Recoleccion>? _futureRecoleccion;
 
   @override
@@ -99,15 +99,15 @@ class _SavePageState extends State<SavePage> {
       recoleccion.clienteEnvia.id = user.id;
     }
 
-    if (TipoPago.efectivo.name == recoleccion.tipoPago.toLowerCase()) {
-      t = TipoPago.efectivo;
-    } else if (recoleccion.tipoPago.toLowerCase() == TipoPago.tarjeta.name) {
-      t = TipoPago.tarjeta;
-    } else if (recoleccion.tipoPago.toLowerCase() ==
-        TipoPago.transferencia.name) {
-      t = TipoPago.transferencia;
+    if (TipoPago.EFECTIVO.name == recoleccion.tipoPago.toUpperCase()) {
+      t = TipoPago.EFECTIVO;
+    } else if (recoleccion.tipoPago.toUpperCase() == TipoPago.TARJETA.name) {
+      t = TipoPago.TARJETA;
+    } else if (recoleccion.tipoPago.toUpperCase() ==
+        TipoPago.TRANSFERENCIA.name) {
+      t = TipoPago.TRANSFERENCIA;
     } else {
-      t = TipoPago.yapagado;
+      t = TipoPago.YA_PAGADO;
     }
   }
 
@@ -231,7 +231,7 @@ class _SavePageState extends State<SavePage> {
                       TextFormField(
                         onChanged: (value) => {
                           recoleccion.zonaEntrega =
-                              int.parse(zonaRecibeController.text)
+                              int.tryParse(zonaRecibeController.text)!
                         },
                         controller: zonaRecibeController,
                         keyboardType: TextInputType.number,
@@ -262,7 +262,7 @@ class _SavePageState extends State<SavePage> {
                         onChange: (TipoPago tipoPago) {
                           recoleccion.tipoPago = tipoPago.name;
 
-                          if (tipoPago.name == TipoPago.yapagado.name) {
+                          if (tipoPago.name == TipoPago.YA_PAGADO.name) {
                             recoleccion.totalCobrar = '0.00';
                             precioProductoController.text = '0.00';
                           }
@@ -383,7 +383,6 @@ class _SavePageState extends State<SavePage> {
         throw Exception('Failed to update recoleccion.');
       }
     } else {
-      recoleccion.id = Random().nextInt(1000);
       dato = await createRecoleccion(recoleccion);
       //Operation.instance.insertRecoleccion(recoleccion);
       if (!dato) {

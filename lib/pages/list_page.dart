@@ -51,21 +51,21 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
   @override
   Widget build(BuildContext context) {
     Recoleccion r = Recoleccion(
-       0,
+        0,
         DateTime.now().toString(),
-         "",
-       "",
-         "",
-         "0.00",
-         "0.00",
-         "",
-         0,
-         "creada",
-         "efectivo",
+        "",
+        "",
+        "",
+        "0.00",
+        "0.00",
+        "",
+        0,
+        "CREADA",
+        "EFECTIVO",
         // Municipio(id: 1, name: "", code: ""),
-          Municipio(id: 1, nombre: ""),
-          Cliente(id: 0, nombre: '', apellido: '', telefono: '', direcciones: []),
-          Empleado(id: 0, nombre: '', apellido: '', telefono: ''));
+        Municipio(id: 1, nombre: ""),
+        Cliente(id: 0, nombre: '', apellido: '', telefono: '', direcciones: []),
+        Empleado(id: 0, nombre: '', apellido: '', telefono: ''));
     // ": "5656533323",
 
     return DefaultTabController(
@@ -421,26 +421,26 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
 
             if (r.empleadoAsignado!.id != null) ...[
               //if (singleton.perfilUsuario == 'EMPLEADO') ...[
-                const SizedBox(height: 10),
-                const Text(
-                  'Mensajero Asignado',
-                  style: TextStyle(
-                      fontFamily: 'Lato',
-                      fontStyle: FontStyle.normal,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
-                Row(
-                  children: [
-                    const Icon(Icons.two_wheeler_outlined),
-                    Expanded(
-                      child: Text(
-                          '${r.empleadoAsignado!.nombre} ${r.empleadoAsignado!.apellido}',
-                          style: const TextStyle(
-                              fontFamily: 'Lato', fontSize: 18.00)),
-                    ),
-                  ],
-                ),
+              const SizedBox(height: 10),
+              const Text(
+                'Mensajero Asignado',
+                style: TextStyle(
+                    fontFamily: 'Lato',
+                    fontStyle: FontStyle.normal,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold),
+              ),
+              Row(
+                children: [
+                  const Icon(Icons.two_wheeler_outlined),
+                  Expanded(
+                    child: Text(
+                        '${r.empleadoAsignado!.nombre} ${r.empleadoAsignado!.apellido}',
+                        style: const TextStyle(
+                            fontFamily: 'Lato', fontSize: 18.00)),
+                  ),
+                ],
+              ),
               //]
             ],
           ],
@@ -476,11 +476,7 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
   // ignore: non_constant_identifier_names
   Widget BotonFlotante(Recoleccion r) {
     if (singleton.perfilUsuario == "EMPLEADO") {
-
-   
-return Container();
-     
-      
+      return Container();
     } else {
       return FloatingActionButton(
         onPressed: () {
