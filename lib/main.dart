@@ -19,7 +19,7 @@ class MensajeriaApp extends StatelessWidget {
   const MensajeriaApp({super.key});
 
   @override
-  Widget build(BuildContext czontext) {
+  Widget build(BuildContext context) {
     return Sizer(
       builder: (context, orientation, deviceType) {
         return MaterialApp(

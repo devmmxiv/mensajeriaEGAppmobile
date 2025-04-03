@@ -2,10 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:mobile_app_mensajeria/api/api_recoleccion.dart';
-
-import 'package:mobile_app_mensajeria/db/operation_db.dart';
 import 'package:mobile_app_mensajeria/functions/format_functions.dart';
-
 import 'package:mobile_app_mensajeria/models/login_model.dart';
 import 'package:mobile_app_mensajeria/models/municpios_model.dart';
 import 'package:mobile_app_mensajeria/models/recoleccion_model.dart';
@@ -30,6 +27,7 @@ class _ListRecolecciones extends StatefulWidget {
 }
 
 class _ListRecoleccionesState extends State<_ListRecolecciones> {
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
   late UserLogeado singleton;
   late Future<List<Recoleccion>> recolecciones;
   bool isInternet = true;
@@ -42,35 +40,32 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
     _loadData();
   }
 
-  _loadData() async {
-    recolecciones = getRecolecciones(singleton);
-
-    if (isInternet) {
-      //  recolecciones = getRecolecciones(singleton);
-      //recolecciones = getRecoleccionesHttp();
-    } else {
-      //se trabajara todo online
-      // recolecciones = Operation.instance.getRecolecciones();
-    }
+  Future<Null> _loadData() async {
+    refreshKey.currentState?.show();
+    setState(() {
+      recolecciones = getRecolecciones(singleton);
+    });
+    return null;
   }
 
   @override
   Widget build(BuildContext context) {
     Recoleccion r = Recoleccion(
-        0,
+       0,
         DateTime.now().toString(),
-        "",
-        "",
-        "",
-        "0.00",
-        "0.00",
-        "",
-        0,
-        "creada",
-        "efectivo",
-        Municipio(id: 1, name: "", code: ""),
-        Cliente(id: 0, nombre: '', apellido: '', telefono: '', direcciones: []),
-        Empleado(id: 0, nombre: '', apellido: '', telefono: ''));
+         "",
+       "",
+         "",
+         "0.00",
+         "0.00",
+         "",
+         0,
+         "creada",
+         "efectivo",
+        // Municipio(id: 1, name: "", code: ""),
+          Municipio(id: 1, nombre: ""),
+          Cliente(id: 0, nombre: '', apellido: '', telefono: '', direcciones: []),
+          Empleado(id: 0, nombre: '', apellido: '', telefono: ''));
     // ": "5656533323",
 
     return DefaultTabController(
@@ -124,6 +119,7 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
                           temp1.add(e);
                         }
                       }
+                      // ignore: empty_catches
                     } catch (e) {}
 
                     return TabBarView(
@@ -133,7 +129,7 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
                           child: Column(
                             children: [
                               const Text(
-                                "Mis Paquetes por Recolectar",
+                                "Paquetes por Recolectar",
                                 style: TextStyle(
                                     fontFamily: 'Lato',
                                     color: Colors.black,
@@ -147,7 +143,7 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
                         Column(
                           children: [
                             const Text(
-                              "Mis Paquetes en Ruta",
+                              "Paquetes en Ruta",
                               style: TextStyle(
                                   fontFamily: 'Lato',
                                   color: Colors.black,
@@ -205,10 +201,13 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
   }
 
   Widget listViewRecolecciones(List<Recoleccion> lista) {
-    return ListView.builder(
-        padding: const EdgeInsets.all(5),
-        itemCount: lista.length,
-        itemBuilder: (_, i) => _createItem(i, lista));
+    return RefreshIndicator(
+        key: refreshKey,
+        onRefresh: _loadData,
+        child: ListView.builder(
+            padding: const EdgeInsets.all(5),
+            itemCount: lista.length,
+            itemBuilder: (_, i) => _createItem(i, lista)));
     //_createItem(i, lista));
   }
 
@@ -253,10 +252,10 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
               : DismissDirection.startToEnd,
           onDismissed: (direction) async {
             if (direction == DismissDirection.startToEnd) {
-              int a = await Operation.instance.deleteRecoleccion(lista[i]);
+              /* int a = await Operation.instance.deleteRecoleccion(lista[i]);
               if (a > 0) {
                 //recolecciones.removeAt(i);
-              }
+              }*/
             }
           },
           child: Tarjeta(lista[i]));
@@ -299,9 +298,9 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
               ]),
               Fila(
                   r.estado,
-                  r.clienteEnvia.direcciones!.first.direccionCompleta!,
+                  r.clienteEnvia.direcciones.first.direccionCompleta!,
                   const Icon(Icons.location_on)),
-              Fila(r.estado, r.clienteEnvia.direcciones!.first.municipio!.name!,
+              Fila(r.estado, r.clienteEnvia.direcciones.first.municipio.nombre!,
                   const Icon(Icons.check)),
               const SizedBox(height: 10)
             ],
@@ -360,7 +359,8 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
                 const Icon(Icons.location_city),
                 Expanded(
                     child: Text(
-                  r.municipioRecibe.name!, // recolecciones[i].municipioRecibe,
+                  r.municipioRecibe
+                      .nombre!, // recolecciones[i].municipioRecibe,
                   style: const TextStyle(fontFamily: 'Lato', fontSize: 16),
                 )),
               ],
@@ -419,8 +419,8 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
               ],
             ),*/
 
-            if (r.empleadoAsignado.id != null) ...[
-              if (singleton.perfilUsuario == 'EMPLEADO') ...[
+            if (r.empleadoAsignado!.id != null) ...[
+              //if (singleton.perfilUsuario == 'EMPLEADO') ...[
                 const SizedBox(height: 10),
                 const Text(
                   'Mensajero Asignado',
@@ -435,13 +435,13 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
                     const Icon(Icons.two_wheeler_outlined),
                     Expanded(
                       child: Text(
-                          '${r.empleadoAsignado.nombre} ${r.empleadoAsignado.apellido}',
+                          '${r.empleadoAsignado!.nombre} ${r.empleadoAsignado!.apellido}',
                           style: const TextStyle(
                               fontFamily: 'Lato', fontSize: 18.00)),
                     ),
                   ],
                 ),
-              ]
+              //]
             ],
           ],
         ),
@@ -476,7 +476,11 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
   // ignore: non_constant_identifier_names
   Widget BotonFlotante(Recoleccion r) {
     if (singleton.perfilUsuario == "EMPLEADO") {
-      return Container();
+
+   
+return Container();
+     
+      
     } else {
       return FloatingActionButton(
         onPressed: () {

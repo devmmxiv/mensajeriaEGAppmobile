@@ -8,7 +8,7 @@ import 'package:mobile_app_mensajeria/api/api_empleado.dart';
 import 'package:mobile_app_mensajeria/functions/http_functions.dart';
 import 'package:mobile_app_mensajeria/models/login_model.dart';
 import 'package:mobile_app_mensajeria/pages/main_page.dart';
-import 'package:mobile_app_mensajeria/widgets/FormCustomWidget.dart';
+import 'package:mobile_app_mensajeria/widgets/form_custom_widget.dart';
 //import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
@@ -23,6 +23,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
   // SharedPreferences? _prefs;
+  String mensaje = "";
   @override
   void initState() {
     cargarPreferencias();
@@ -102,14 +103,14 @@ class _LoginPageState extends State<LoginPage> {
                         bool dato = await validarUsuario(user, pwd);
 
                         if (dato) {
-                          Navigator.pushReplacementNamed(
-                              context, MainPage.ROUTE);
+                          if (context.mounted) {
+                            Navigator.pushReplacementNamed(
+                                context, MainPage.ROUTE);
+                          }
                         } else {
                           if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content:
-                                        Text('Error en Usuario/Contraseña')));
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(SnackBar(content: Text(mensaje)));
                           }
                         }
                       }
@@ -124,44 +125,56 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<bool> validarUsuario(String user, String pwd) async {
+    setState(() {
+        mensaje = "usuario/contraseña invalidos";
+      });
     var token = await login(user, pwd);
-    print(token);
     if (token.isEmpty) {
+      
       return false;
     } else {
-      final tokenF = jsonDecode(token) as Map<String, dynamic>;
-      var usuarioJson = await dataUser(tokenF['accessToken']);
+      try {
+        final tokenF = jsonDecode(token) as Map<String, dynamic>;
+        var usuarioJson = await dataUser(tokenF['accessToken']);
 
-      final userMap = jsonDecode(usuarioJson) as Map<String, dynamic>;
-      final loginValidado = Login.fromJson(userMap);
+        final userMap = jsonDecode(usuarioJson) as Map<String, dynamic>;
+        final loginValidado = Login.fromJson(userMap);
 
-      if (loginValidado.estado) {
-        UserLogeado singleton = UserLogeado();
-        singleton.setUser(loginValidado.username);
-        singleton.setPerfilUsuario(loginValidado.perfilUsuario);
-        //buscamos el id del usuario o empleado segun el perfil
-        if (loginValidado.perfilUsuario == 'CLIENTE') {
-          //BUSCAMOS CLIENTE
-          var c = await getClienteByUser(loginValidado.username);
+        if (loginValidado.estado) {
+          UserLogeado singleton = UserLogeado();
+          singleton.setUser(loginValidado.username);
+          singleton.setPerfilUsuario(loginValidado.perfilUsuario);
+          //buscamos el id del usuario o empleado segun el perfil
+          if (loginValidado.perfilUsuario == 'CLIENTE') {
+            //BUSCAMOS CLIENTE
+            var c = await getClienteByUser(loginValidado.username);
 
-          final cliente = jsonDecode(c) as Map<String, dynamic>;
-          int id = cliente['id'];
-          singleton.setId(id);
-        } else {
-          var e = await getEmpleadoByUser(loginValidado.username);
-          
-          final empleado = jsonDecode(e) as Map<String, dynamic>;
+            final cliente = jsonDecode(c) as Map<String, dynamic>;
+            int id = cliente['id'];
+            singleton.setId(id);
+          } else {
+            var e = await getEmpleadoByUser(loginValidado.username);
 
-          int id = empleado['id'];
-          bool esAdmin = empleado['esAdministrador'];
-          singleton.setId(id);
-          singleton.setIsAdmin(esAdmin);
-          //buscamos emplead
-        }
+            final empleado = jsonDecode(e) as Map<String, dynamic>;
 
-        // Set data through the singleton instance.
+            int id = empleado['id'];
+            bool esAdmin = empleado['esAdministrador'];
+            singleton.setId(id);
+            singleton.setIsAdmin(esAdmin);
+            //buscamos emplead
+          }
+
+          // Set data through the singleton instance.
+        } 
+        return loginValidado.estado;
+      } catch (error) {
+        setState(() {
+        mensaje = error.toString();
+      });
+        
+
+        return false;
       }
-      return loginValidado.estado;
     }
   }
 }

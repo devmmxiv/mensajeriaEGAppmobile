@@ -21,8 +21,7 @@ Future<List<Recoleccion>> getRecoleccionesHttp() async {
 
       for (var d in jsonData) {
         Recoleccion.fromJson(d);
-         recolecciones.add(Recoleccion(
-          
+        recolecciones.add(Recoleccion(
             d["id"],
             d["fechaCreacion"],
             d["nombreRecibe"],
@@ -61,7 +60,6 @@ Future<List<Recoleccion>> getRecoleccionesEntregadasHttp1() async {
 
       for (var d in jsonData) {
         recolecciones.add(Recoleccion(
-          
             d["id"],
             d["fechaCreacion"],
             d["nombreRecibe"],
@@ -76,7 +74,6 @@ Future<List<Recoleccion>> getRecoleccionesEntregadasHttp1() async {
             Municipio.fromJson(d['municipioRecibe']),
             Cliente.fromJson(d['clienteEnvia']),
             Empleado.fromJson(d['empleadoAsignado'])));
-           
       }
     }
   } catch (e) {
@@ -92,6 +89,8 @@ Future<List<Recoleccion>> getRecoleccionesEntregadasHttp1() async {
 
 Future<bool> createRecoleccion(Recoleccion recoleccion) async {
   bool dato = false;
+
+  RecoleccionInsert r = RecoleccionInsert.fromJson(recoleccion.toMap());
   // String server = dotenv.env['SERVER'].toString();
   try {
     //Uri.http(server, '/api/v1/recoleccion-entrega/');
@@ -101,7 +100,7 @@ Future<bool> createRecoleccion(Recoleccion recoleccion) async {
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(recoleccion.toMap()),
+      body: jsonEncode(r.toMap()),
     );
 
     if (response.statusCode == 201) {
@@ -119,21 +118,15 @@ Future<bool> updateRecoleccion(Recoleccion recoleccion) async {
   bool dato = false;
   //String server = dotenv.env['SERVER'].toString();
   try {
-    // Uri uri = Uri.http(
-    //      server, '/api/v1/recoleccion-entrega/update/${recoleccion.id}');
-
     final response = await http.put(
       getUri('/api/v1/recoleccion-entrega/update/${recoleccion.id}'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(recoleccion.toMap()),
-      
     );
 
     if (response.statusCode == 200) {
-      // If the server did return a 201 CREATED response,
-      // then parse the JSON.
       dato = true;
     }
   } catch (e) {

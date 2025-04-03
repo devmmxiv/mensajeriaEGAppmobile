@@ -18,10 +18,9 @@ class MunicipioWidget extends StatelessWidget {
       hint: const Text(' Seleccione un Municipio '),
       decoration: const InputDecoration(labelText: "Municipio"),
       items: Municipio.getMunicipios.map((m) {
-        
         return DropdownMenuItem<Municipio>(
           value: m,
-          child: Text(m.name!),
+          child: Text(m.nombre!),
         );
       }).toList(),
       onChanged: (v) {

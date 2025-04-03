@@ -1,10 +1,12 @@
+// ignore_for_file: empty_catches
+
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:mobile_app_mensajeria/db/operation_db.dart';
 
 import 'package:mobile_app_mensajeria/enums/tipo_pago_enum.dart';
 import 'package:mobile_app_mensajeria/functions/http_functions.dart';
+import 'package:mobile_app_mensajeria/models/login_model.dart';
 import 'package:mobile_app_mensajeria/models/municpios_model.dart';
 
 import 'package:mobile_app_mensajeria/models/recoleccion_model.dart';
@@ -29,6 +31,7 @@ class _SavePageState extends State<SavePage> {
   final apellidoRecibeController = TextEditingController();
   final telefonoRecibeController = TextEditingController();
   final precioProductoController = TextEditingController();
+  final zonaRecibeController = TextEditingController();
   final direccionController = TextEditingController();
   final estadoController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -89,6 +92,11 @@ class _SavePageState extends State<SavePage> {
       telefonoRecibeController.text = recoleccion.telefonoRecibe;
       direccionController.text = recoleccion.direccionEntrega;
       precioProductoController.text = recoleccion.totalCobrar;
+      zonaRecibeController.text = recoleccion.zonaEntrega.toString();
+    }
+    UserLogeado user = UserLogeado();
+    if (user.perfilUsuario == "CLIENTE") {
+      recoleccion.clienteEnvia.id = user.id;
     }
 
     if (TipoPago.efectivo.name == recoleccion.tipoPago.toLowerCase()) {
@@ -220,12 +228,33 @@ class _SavePageState extends State<SavePage> {
                       const SizedBox(
                         height: 10,
                       ),
+                      TextFormField(
+                        onChanged: (value) => {
+                          recoleccion.zonaEntrega =
+                              int.parse(zonaRecibeController.text)
+                        },
+                        controller: zonaRecibeController,
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value!.isEmpty || value.trim().isEmpty) {
+                            return "Tiene que Ingresar Zona";
+                          } else {
+                            return null;
+                          }
+                        },
+                        decoration: const InputDecoration(
+                            label: Text("Ingrese Zona"),
+                            border: OutlineInputBorder()),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       MunicipioWidget(
                           onChange: (Municipio m) {
-                            recoleccion.municipioRecibe.name = m.name!;
-                            recoleccion.municipioRecibe.id = m.id!;
+                            recoleccion.municipioRecibe.nombre = m.nombre!;
+                            recoleccion.municipioRecibe.id = m.id;
                           },
-                          initialValue: recoleccion.municipioRecibe.id!),
+                          initialValue: recoleccion.municipioRecibe.id),
                       const SizedBox(
                         height: 10,
                       ),
@@ -307,10 +336,14 @@ class _SavePageState extends State<SavePage> {
       future: _futureRecoleccion,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          Navigator.pop(
-            context,
-            ListPage.ROUTE,
-          );
+          try {
+            if (context.mounted) {
+              Navigator.pop(
+                context,
+                ListPage.ROUTE,
+              );
+            }
+          } catch (error) {}
         } else if (snapshot.hasError) {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,

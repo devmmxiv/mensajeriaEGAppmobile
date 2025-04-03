@@ -261,14 +261,14 @@ class DetalleListWidget extends StatelessWidget {
                 if (recoleccion.estado.toLowerCase() == 'creada') ...[
                   Text(
                       recoleccion
-                          .clienteEnvia.direcciones![0].direccionCompleta!,
+                          .clienteEnvia.direcciones[0].direccionCompleta!,
                       style: const TextStyle(
                           fontStyle: FontStyle.italic, fontSize: 24.00)),
-                  Text("Zona ${recoleccion.clienteEnvia.direcciones![0].zona!}",
+                  Text("Zona ${recoleccion.clienteEnvia.direcciones[0].zona!}",
                       style: const TextStyle(
                           fontStyle: FontStyle.italic, fontSize: 24.00)),
                   Text(
-                      recoleccion.clienteEnvia.direcciones![0].municipio!.name!,
+                      recoleccion.clienteEnvia.direcciones[0].municipio.nombre!,
                       style: const TextStyle(
                           decorationStyle: TextDecorationStyle.dotted,
                           fontStyle: FontStyle.normal,
@@ -279,7 +279,7 @@ class DetalleListWidget extends StatelessWidget {
                       style: const TextStyle(
                           fontStyle: FontStyle.italic, fontSize: 24.00)),
 
-                  Text(recoleccion.municipioRecibe.name!,
+                  Text(recoleccion.municipioRecibe.nombre!,
                       style: const TextStyle(
                           decorationStyle: TextDecorationStyle.dotted,
                           fontStyle: FontStyle.italic,

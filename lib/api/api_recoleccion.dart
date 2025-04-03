@@ -14,7 +14,8 @@ Future<List<Recoleccion>> getRecolecciones(UserLogeado singleton) async {
   String path = 'recoleccion-entrega/';
   try {
     if (UserLogeado().getPerfil() == 'CLIENTE') {
-      path = 'recoleccion-entrega/recoleccionclienteenvia/${UserLogeado().id}';
+      path =
+          '$versionapi/recoleccion-entrega/recoleccionclienteenvia/${UserLogeado().id}';
     } else {
       //empleado
       if (UserLogeado().isAdministrador) {
@@ -35,23 +36,25 @@ Future<List<Recoleccion>> getRecolecciones(UserLogeado singleton) async {
 
       for (var d in jsonData) {
         recolecciones.add(Recoleccion(
-            d["id"],
-            d["fechaCreacion"],
-            d["nombreRecibe"],
-            d["apellidoRecibe"],
-            d["telefonoRecibe"],
-            d["totalCobrar"],
-            d["precioEnvio"],
-            d["direccionEntrega"],
-            d["zonaEntrega"],
-            d["estado"],
-            d["tipoPago"],
+             d["id"],
+             d["fechaCreacion"],
+             d["nombreRecibe"],
+             d["apellidoRecibe"],
+             d["telefonoRecibe"],
+             d["totalCobrar"],
+             d["precioEnvio"],
+             d["direccionEntrega"],
+             d["zonaEntrega"],
+             d["estado"],
+             d["tipoPago"],
             // d["clienteEnvia"]["id"],
-            Municipio.fromJson(d['municipioRecibe']),
-            Cliente.fromJson(d['clienteEnvia']),
-           // Direccion.fromJson(d["direccionEnvia"]),
-           // Municipio.fromJson(d['municipioEnvia']),
-            Empleado.fromJson(d['empleadoAsignado'])));
+             Municipio.fromJson(d['municipioRecibe']),
+             Cliente.fromJson(d['clienteEnvia']),
+            // Direccion.fromJson(d["direccionEnvia"]),
+            // Municipio.fromJson(d['municipioEnvia']),
+             d['empleadoAsignado'] == null
+                ? Empleado()
+                : Empleado.fromJson(d['empleadoAsignado'])));
         // print(recolecciones[0].empleadoAsignado.id);
       }
     }

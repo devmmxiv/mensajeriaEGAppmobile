@@ -1,9 +1,6 @@
-
 import 'package:flutter/material.dart';
-
 import 'package:mobile_app_mensajeria/db/operation_db.dart';
 import 'package:mobile_app_mensajeria/functions/format_functions.dart';
-
 import 'package:mobile_app_mensajeria/functions/http_functions.dart';
 import 'package:mobile_app_mensajeria/models/municpios_model.dart';
 import 'package:mobile_app_mensajeria/models/recoleccion_model.dart';
@@ -41,7 +38,7 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
     if (isInternet) {
       recolecciones = getRecoleccionesHttp();
     } else {
-      recolecciones = Operation.instance.getRecolecciones();
+    //  recolecciones = Operation.instance.getRecolecciones();
     }
   }
 
@@ -55,17 +52,13 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
         "",
         "",
         "0.00",
+        "0.00",
         "",
         0,
         "creada",
         "efectivo",
-        1,
-        "Guatemala",
-        1,
-        Municipio(id: 0, name: "", code: ""),
-        Cliente(id: 0, nombre: '', apellido: '', telefono: ''),
-        //Direccion(id: 0),
-       // Municipio(id: 1, name: "", code: ""),
+        Municipio(id: 1, nombre: ""),
+        Cliente(id: 0, nombre: '', apellido: '', telefono: '', direcciones: []),
         Empleado(id: 0, nombre: '', apellido: '', telefono: ''));
 
     return DefaultTabController(
@@ -171,7 +164,7 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
 
   Widget listViewRecolecciones(List<Recoleccion> lista) {
     return ListView.builder(
-        padding: const  EdgeInsets.all(5),
+        padding: const EdgeInsets.all(5),
         itemCount: lista.length,
         itemBuilder: (_, i) => _createItem(i, lista));
     //_createItem(i, lista));
@@ -250,7 +243,8 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
                     Expanded(
                         child: Text(
                       lista[i]
-                          .municipioRecibe, // recolecciones[i].municipioRecibe,
+                          .municipioRecibe
+                          .nombre!, // recolecciones[i].municipioRecibe,
                       style: const TextStyle(fontSize: 16),
                     )),
                   ],

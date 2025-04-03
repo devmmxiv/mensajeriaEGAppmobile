@@ -22,18 +22,28 @@ String formatoFecha(String fecha) {
 }
 
 Uri getUri(String path) {
+  String versionapi = dotenv.env['VERSIONAPI'].toString();
   String server = dotenv.env['SERVER'].toString();
   String scheme = dotenv.env['SCHEME'].toString();
   String puerto = dotenv.env['PORT'].toString();
   int port = int.parse(puerto);
   Uri uri = Uri();
   try {
-    uri = Uri(
+    if (port==0){
+  uri = Uri(
+        scheme: scheme,
+        host: server,
+        path: path //'/api/v1/auth/data-user',
+        );
+    }else{
+  uri = Uri(
         scheme: scheme,
         host: server,
         port: port,
         path: path //'/api/v1/auth/data-user',
         );
+    }
+  
   } catch (e) {
     //print('Error en crear uri ' + e.toString());
   }
