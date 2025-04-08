@@ -3,6 +3,7 @@ import 'package:mobile_app_mensajeria/models/login_model.dart';
 import 'package:mobile_app_mensajeria/pages/about.dart';
 import 'package:mobile_app_mensajeria/pages/list_page.dart';
 import 'package:mobile_app_mensajeria/pages/login.dart';
+import 'package:mobile_app_mensajeria/pages/profile_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -38,7 +39,7 @@ class _MainPageState extends State<MainPage> {
     up = !up;
     usuario = singleton.getUser();
 
-    final screens = [const ListPage(), const About()];
+    final screens = [const ListPage(), const Profile()];
     final colors = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
@@ -71,7 +72,7 @@ class _MainPageState extends State<MainPage> {
                               Text('Salir')
                             ],
                           )),
-                      const PopupMenuItem<int>(
+                      /*const PopupMenuItem<int>(
                           value: 1,
                           child: Row(
                             children: [
@@ -81,7 +82,7 @@ class _MainPageState extends State<MainPage> {
                               ),
                               Text('Perfil')
                             ],
-                          )),
+                          )),*/
                     ]),
           ]),
       body: IndexedStack(
@@ -104,10 +105,11 @@ class _MainPageState extends State<MainPage> {
               label: 'Detalle',
               backgroundColor: colors.primary),
           BottomNavigationBarItem(
-              icon: const Icon(Icons.info_outline),
-              activeIcon: const Icon(Icons.info),
-              label: 'Info',
+              icon: const Icon(Icons.person),
+              activeIcon: const Icon(Icons.person_2_outlined),
+              label: 'Perfil',
               backgroundColor: colors.primary),
+         
         ],
       ),
     );

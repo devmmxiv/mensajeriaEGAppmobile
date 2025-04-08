@@ -47,7 +47,8 @@ class Recoleccion {
       'estado': estado,
       'tipoPago': tipoPago,
       'clienteEnvia': clienteEnvia.toMap(),
-      'empleadoAsignado': empleadoAsignado?.toMap(),
+      'empleadoAsignado':
+          empleadoAsignado == null ? Empleado : empleadoAsignado?.toMap(),
       'municipioRecibe': municipioRecibe.toMap()
     };
   }
@@ -67,7 +68,9 @@ class Recoleccion {
         // idMunicipioRecibe = json['idMunicipioRecibe'] as int,
         municipioRecibe = Municipio.fromJson(json['municipioRecibe']),
         clienteEnvia = Cliente.fromJson(json['clienteEnvia']),
-        empleadoAsignado = Empleado.fromJson(json['empleadoAsignado']);
+        empleadoAsignado = json['empleadoAsignado'] == null
+            ? Empleado()
+            : Empleado.fromJson(json['empleadoAsignado']);
 }
 
 class RecoleccionInsert {

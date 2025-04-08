@@ -116,15 +116,26 @@ Future<bool> createRecoleccion(Recoleccion recoleccion) async {
 
 Future<bool> updateRecoleccion(Recoleccion recoleccion) async {
   bool dato = false;
+
+//no se a asigando ningun empleado
+
   //String server = dotenv.env['SERVER'].toString();
   try {
+    Object body;
+    if (recoleccion.empleadoAsignado!.id == null) {
+      RecoleccionInsert r = RecoleccionInsert.fromJson(recoleccion.toMap());
+      body = jsonEncode(r.toMap());
+    } else {
+      body = jsonEncode(recoleccion.toMap());
+    }
     final response = await http.put(
-      getUri('/api/v1/recoleccion-entrega/update/${recoleccion.id}'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(recoleccion.toMap()),
-    );
+        getUri('/api/v1/recoleccion-entrega/update/${recoleccion.id}'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: body
+        //  body: jsonEncode(recoleccion.toMap()),
+        );
 
     if (response.statusCode == 200) {
       dato = true;

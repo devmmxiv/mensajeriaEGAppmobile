@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-
 import 'package:mobile_app_mensajeria/functions/http_recoleccion.dart';
+import 'package:mobile_app_mensajeria/models/login_model.dart';
 import 'package:mobile_app_mensajeria/models/recoleccion_model.dart';
+import 'package:mobile_app_mensajeria/pages/list_page.dart';
 import 'package:mobile_app_mensajeria/pages/show_message_page.dart';
 
 class DetalleListWidget extends StatelessWidget {
@@ -12,6 +13,8 @@ class DetalleListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    late UserLogeado singleton = UserLogeado();
+
     final colors = Theme.of(context).colorScheme;
     String tituloBoton = '';
 
@@ -31,13 +34,13 @@ class DetalleListWidget extends StatelessWidget {
         backgroundColor: colors.primary,
         title: TituloDetalle(recoleccion.estado),
       ),
-      body: ListViewDetalle(recoleccion, tituloBoton, context),
+      body: ListViewDetalle(recoleccion, tituloBoton, context, singleton),
     );
   }
 
   // ignore: non_constant_identifier_names
-  Widget ListViewDetalle(
-      Recoleccion recoleccion, String tituloBoton, BuildContext context) {
+  Widget ListViewDetalle(Recoleccion recoleccion, String tituloBoton,
+      BuildContext context, UserLogeado singleton) {
     if (recoleccion.estado.toLowerCase() == 'entregada') {
       return Container();
     } else {
@@ -57,7 +60,7 @@ class DetalleListWidget extends StatelessWidget {
           const SizedBox(
             height: 10,
           ),
-          CardTelefono(recoleccion),
+          CardTelefono(recoleccion,singleton),
           const SizedBox(
             height: 10,
           ),
@@ -96,70 +99,87 @@ class DetalleListWidget extends StatelessWidget {
           const SizedBox(
             height: 10,
           ),
-          Card(
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.zero,
-            ),
-            child: Row(children: [
-              if (recoleccion.estado != 'entregada') ...[
-                const SizedBox(
-                  child: Icon(
-                    Icons.settings_power_sharp,
-                    size: 40,
+          if (singleton.perfilUsuario != "CLIENTE") ...[
+            Card(
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.zero,
+              ),
+              child: Row(children: [
+                if (recoleccion.estado != 'entregada') ...[
+                  const SizedBox(
+                    child: Icon(
+                      Icons.settings_power_sharp,
+                      size: 40,
+                    ),
                   ),
-                ),
-                Flexible(
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          MaterialButton(
-                            child: Text(tituloBoton),
-                            onPressed: () async {
-                              if (recoleccion.estado.toLowerCase() ==
-                                  'entregada') {
-                                respuesta(
-                                    context,
-                                    'Confirmacion',
-                                    'La Recoleccion ya esta marcada com Entregada, no se puede cambiar el estado.',
-                                    true);
-                                return;
-                              }
-                              if (recoleccion.estado.toLowerCase() ==
-                                  'creada') {
-                                if (await respuesta(context, 'Pregunta',
-                                    'Seguro ya recolecto el paquete', false)) {
-                                  updateEstadoRecoleccion(
-                                      recoleccion.id, 'recolectada');
-                                  /*Operation.instance
+                  Flexible(
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            MaterialButton(
+                              child: Text(tituloBoton),
+                              onPressed: () async {
+                                if (recoleccion.estado.toLowerCase() ==
+                                    'entregada') {
+                                  respuesta(
+                                      context,
+                                      'Confirmacion',
+                                      'La Recoleccion ya esta marcada com Entregada, no se puede cambiar el estado.',
+                                      true);
+                                  return;
+                                }
+                                if (recoleccion.estado.toLowerCase() ==
+                                    'creada') {
+                                  if (await respuesta(
+                                      context,
+                                      'Pregunta',
+                                      'Seguro ya recolecto el paquete',
+                                      false)) {
+                                    updateEstadoRecoleccion(
+                                        recoleccion.id, 'recolectada');
+                                   if (context.mounted) {
+                                      Navigator.pop(
+                                        context,
+                                        ListPage.ROUTE,
+                                      );
+                                    }
+                                   /* Operation.instance
                                       .updateEstado(
                                           'recolectada', recoleccion.id)
                                       .then((x) => {
                                             if (x == 1) {onChangeEstado()}
                                           });*/
-                                }
-                              } else {
-                                if (await respuesta(context, 'Pregunta',
-                                    'Seguro ya entrego el paquete', false)) {
-                                  updateEstadoRecoleccion(
-                                      recoleccion.id, 'entregada');
-                                  /* Operation.instance
+                                  }
+                                } else {
+                                  if (await respuesta(context, 'Pregunta',
+                                      'Seguro ya entrego el paquete', false)) {
+                                    updateEstadoRecoleccion(
+                                        recoleccion.id, 'entregada');
+                                    if (context.mounted) {
+                                      Navigator.pop(
+                                        context,
+                                        ListPage.ROUTE,
+                                      );
+                                    }
+                                    /* Operation.instance
                                       .updateEstado('entregada', recoleccion.id)
                                       .then((x) => {
                                             if (x == 1) {onChangeEstado()}
                                           });*/
+                                  }
                                 }
-                              }
-                            },
-                          )
-                        ]),
-                  ),
-                )
-              ],
-            ]),
-          ),
+                              },
+                            )
+                          ]),
+                    ),
+                  )
+                ],
+              ]),
+            )
+          ],
         ],
       );
     }
@@ -294,7 +314,8 @@ class DetalleListWidget extends StatelessWidget {
   }
 
   // ignore: non_constant_identifier_names
-  Widget CardTelefono(Recoleccion recoleccion) {
+  Widget CardTelefono(Recoleccion recoleccion,UserLogeado singleton) {
+
     return Card(
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.zero,
@@ -314,15 +335,11 @@ class DetalleListWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 const Text('Numero de Telefono'),
-                if (recoleccion.estado.toLowerCase() == 'creada') ...[
-                  const Text("",
-                      style: TextStyle(
-                          fontStyle: FontStyle.italic, fontSize: 24.00))
-                ] else ...[
+                if (singleton.perfilUsuario!="EMPLEADO") ...[
                   Text(recoleccion.telefonoRecibe,
                       style: const TextStyle(
                           fontStyle: FontStyle.italic, fontSize: 24.00))
-                ],
+                ] 
               ],
             ),
           ),
@@ -333,6 +350,7 @@ class DetalleListWidget extends StatelessWidget {
 
   // ignore: non_constant_identifier_names
   Widget CardFormaPago(Recoleccion recoleccion) {
+
     if (recoleccion.estado.toLowerCase() == 'recolectada') {
       return Card(
         shape: const RoundedRectangleBorder(

@@ -310,6 +310,12 @@ class _SavePageState extends State<SavePage> {
                                         grabarRecoleccion(recoleccion);
                                   });
                                 }
+                                if (mounted) {
+                                  Navigator.pop(
+                                    context,
+                                    ListPage.ROUTE,
+                                  );
+                                }
                               }
                             }
                           },
@@ -337,12 +343,12 @@ class _SavePageState extends State<SavePage> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           try {
-            if (context.mounted) {
+            /* if (context.mounted) {
               Navigator.pop(
                 context,
                 ListPage.ROUTE,
               );
-            }
+            }*/
           } catch (error) {}
         } else if (snapshot.hasError) {
           return Column(

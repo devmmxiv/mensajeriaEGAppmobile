@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:nativewrappers/_internal/vm/lib/math_patch.dart';
 
 import 'package:flutter/material.dart';
 import 'package:mobile_app_mensajeria/api/api_recoleccion.dart';
@@ -27,7 +28,10 @@ class _ListRecolecciones extends StatefulWidget {
 }
 
 class _ListRecoleccionesState extends State<_ListRecolecciones> {
-  var refreshKey = GlobalKey<RefreshIndicatorState>();
+  //var refreshKey = GlobalKey<RefreshIndicatorState>();
+  //GlobalKey<RefreshIndicatorState> refreshKey =
+  // GlobalKey<RefreshIndicatorState>(debugLabel: 'listpagekey');
+  final refreshKey = GlobalKey<FormState>();
   late UserLogeado singleton;
   late Future<List<Recoleccion>> recolecciones;
   bool isInternet = true;
@@ -41,7 +45,7 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
   }
 
   Future<Null> _loadData() async {
-    refreshKey.currentState?.show();
+    refreshKey.currentState;
     setState(() {
       recolecciones = getRecolecciones(singleton);
     });
@@ -125,6 +129,7 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
                     return TabBarView(
                       children: [
                         Container(
+                         
                           alignment: Alignment.center,
                           child: Column(
                             children: [
@@ -139,6 +144,7 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
                               Expanded(child: listViewRecolecciones(temp0)),
                             ],
                           ),
+                          
                         ),
                         Column(
                           children: [
@@ -212,6 +218,7 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
   }
 
   _createItem(int i, List<Recoleccion> lista) {
+    try{
     if (UserLogeado().perfilUsuario == "EMPLEADO" &&
         !UserLogeado().isAdministrador) {
       //return Container();
@@ -220,19 +227,21 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
     } else {
       return Dismissible(
           confirmDismiss: (DismissDirection dismissDirection) async {
-            switch (dismissDirection) {
-              case DismissDirection.startToEnd:
-                return await respuesta(
-                    'Pregunta', 'Seguro desea Eliminar el Registro');
+            if (singleton.perfilUsuario != "CLIENTE") {
+              switch (dismissDirection) {
+                case DismissDirection.startToEnd:
+                  return await respuesta(
+                      'Pregunta', 'Seguro desea Eliminar el Registro');
 
-              case DismissDirection.horizontal:
-              case DismissDirection.vertical:
-              case DismissDirection.up:
-              case DismissDirection.down:
-              case DismissDirection.endToStart:
-                assert(false);
-              case DismissDirection.none:
-              // TODO: Handle this case.
+                case DismissDirection.horizontal:
+                case DismissDirection.vertical:
+                case DismissDirection.up:
+                case DismissDirection.down:
+                case DismissDirection.endToStart:
+                  assert(false);
+                case DismissDirection.none:
+                // TODO: Handle this case.
+              }
             }
             return null;
           },
@@ -259,6 +268,9 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
             }
           },
           child: Tarjeta(lista[i]));
+    }
+    }catch(e ){
+        print('Something really unknown: $e');
     }
   }
 
@@ -315,9 +327,9 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
                     builder: (context) => DetalleListWidget(
                           recoleccion: r, //, recolecciones[i],
                           onChangeEstado: () {
-                            setState(() {
-                              _loadData();
-                            });
+                            // setState(() {
+                            // _loadData();
+                            //});
                           },
                         ))).then((value) => setState(() {
                   _loadData();
