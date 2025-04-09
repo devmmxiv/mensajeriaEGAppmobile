@@ -139,7 +139,30 @@ class RecoleccionInsert {
         municipioRecibe = Municipio.fromJson(json['municipioRecibe']),
         clienteEnvia = ClienteInsert.fromJson(json['clienteEnvia']);
 }
+class CabeceraRecoleccion {
+  int cantidad;
+    Cliente clienteEnvia;
 
+
+  CabeceraRecoleccion(
+    this.cantidad,
+    this.clienteEnvia,
+  );
+
+  Map<String, dynamic> toMap() {
+    return {
+      'cantidad': cantidad,
+   
+      'clienteEnvia': clienteEnvia.toMap(),
+  
+    };
+  }
+
+  CabeceraRecoleccion.fromJson(Map<String, dynamic> json)
+      : cantidad = json['cantidad'] as int,
+ 
+        clienteEnvia = Cliente.fromJson(json['clienteEnvia']);
+}
 class ClienteInsert {
   int? id;
 

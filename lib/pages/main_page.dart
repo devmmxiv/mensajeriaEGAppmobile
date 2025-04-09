@@ -39,7 +39,7 @@ class _MainPageState extends State<MainPage> {
     up = !up;
     usuario = singleton.getUser();
 
-    final screens = [const ListPage(), const Profile()];
+    final screens = [const ListPage(), const About()];
     final colors = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
@@ -56,7 +56,8 @@ class _MainPageState extends State<MainPage> {
                 Icons.person,
                 color: Colors.white,
               ),
-              Text(usuario)
+              Text(usuario,
+                  style: const TextStyle(fontFamily: 'Lato', fontSize: 16.00))
             ]),
             PopupMenuButton<int>(
                 onSelected: (item) => handleClick(item),
@@ -69,20 +70,34 @@ class _MainPageState extends State<MainPage> {
                                 Icons.logout,
                                 color: Colors.black,
                               ),
-                              Text('Salir')
+                              Text('Salir',
+                                  style: TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.normal))
                             ],
                           )),
-                      /*const PopupMenuItem<int>(
+                      PopupMenuItem<int>(
                           value: 1,
-                          child: Row(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const Profile()));
+                          },
+                          child: const Row(
                             children: [
                               Icon(
                                 Icons.settings,
                                 color: Colors.black,
                               ),
-                              Text('Perfil')
+                              Text('Cambiar Contraseña',
+                                  style: TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.normal))
                             ],
-                          )),*/
+                          )),
                     ]),
           ]),
       body: IndexedStack(
@@ -100,16 +115,15 @@ class _MainPageState extends State<MainPage> {
         elevation: 0,
         items: [
           BottomNavigationBarItem(
-              icon: const Icon(Icons.two_wheeler),
+              icon: const Icon(Icons.list),
               activeIcon: const Icon(Icons.list_alt_outlined),
               label: 'Detalle',
               backgroundColor: colors.primary),
           BottomNavigationBarItem(
-              icon: const Icon(Icons.person),
-              activeIcon: const Icon(Icons.person_2_outlined),
-              label: 'Perfil',
+              icon: const Icon(Icons.info_outline),
+              activeIcon: const Icon(Icons.info),
+              label: 'Info',
               backgroundColor: colors.primary),
-         
         ],
       ),
     );

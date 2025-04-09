@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:nativewrappers/_internal/vm/lib/math_patch.dart';
 
 import 'package:flutter/material.dart';
 import 'package:mobile_app_mensajeria/api/api_recoleccion.dart';
@@ -31,7 +30,7 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
   //var refreshKey = GlobalKey<RefreshIndicatorState>();
   //GlobalKey<RefreshIndicatorState> refreshKey =
   // GlobalKey<RefreshIndicatorState>(debugLabel: 'listpagekey');
-  final refreshKey = GlobalKey<FormState>();
+  // final refreshKey = GlobalKey<FormState>();
   late UserLogeado singleton;
   late Future<List<Recoleccion>> recolecciones;
   bool isInternet = true;
@@ -45,7 +44,7 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
   }
 
   Future<Null> _loadData() async {
-    refreshKey.currentState;
+    // refreshKey.currentState;
     setState(() {
       recolecciones = getRecolecciones(singleton);
     });
@@ -114,8 +113,10 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
                     List<Recoleccion> temp1 = [];
                     List<Recoleccion> temp2 = [];
                     try {
+                      
                       for (var e in temp) {
-                        if (e.estado.toLowerCase() == 'entregada') {
+                        if (e.estado.toLowerCase() == 'entregada' ||
+                            e.estado.toLowerCase() == 'no_recibida') {
                           temp2.add(e);
                         } else if (e.estado.toLowerCase() == 'creada') {
                           temp0.add(e);
@@ -129,44 +130,42 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
                     return TabBarView(
                       children: [
                         Container(
-                         
                           alignment: Alignment.center,
                           child: Column(
                             children: [
-                              const Text(
-                                "Paquetes por Recolectar",
-                                style: TextStyle(
+                              Text(
+                                '${temp0.length}' " Paquetes por Recolectar",
+                                style: const TextStyle(
                                     fontFamily: 'Lato',
                                     color: Colors.black,
-                                    fontSize: 26,
-                                    fontWeight: FontWeight.bold),
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.normal),
                               ),
                               Expanded(child: listViewRecolecciones(temp0)),
                             ],
                           ),
-                          
                         ),
                         Column(
                           children: [
-                            const Text(
-                              "Paquetes en Ruta",
-                              style: TextStyle(
+                            Text(
+                              '${temp1.length}' " Paquetes en Ruta",
+                              style: const TextStyle(
                                   fontFamily: 'Lato',
                                   color: Colors.black,
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.bold),
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.normal),
                             ),
                             Expanded(child: listViewRecolecciones(temp1)),
                           ],
                         ),
                         Column(
                           children: [
-                            const Text(
-                              "Paquetes Entregados",
-                              style: TextStyle(
+                            Text(
+                              '${temp2.length}' " Paquetes Entregados",
+                              style: const TextStyle(
                                   fontFamily: 'Lato',
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.bold),
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.normal),
                             ),
                             Expanded(child: listViewRecolecciones(temp2)),
                           ],
@@ -208,7 +207,7 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
 
   Widget listViewRecolecciones(List<Recoleccion> lista) {
     return RefreshIndicator(
-        key: refreshKey,
+        key: UniqueKey(),
         onRefresh: _loadData,
         child: ListView.builder(
             padding: const EdgeInsets.all(5),
@@ -218,31 +217,30 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
   }
 
   _createItem(int i, List<Recoleccion> lista) {
-    try{
-    if (UserLogeado().perfilUsuario == "EMPLEADO" &&
+    /* if (UserLogeado().perfilUsuario == "EMPLEADO" &&
         !UserLogeado().isAdministrador) {
-      //return Container();
+  
 
       return Tarjeta(lista[i]);
-    } else {
+    } else {*/
+    if (singleton.perfilUsuario == "ADMINISTRADOR") {
       return Dismissible(
           confirmDismiss: (DismissDirection dismissDirection) async {
-            if (singleton.perfilUsuario != "CLIENTE") {
-              switch (dismissDirection) {
-                case DismissDirection.startToEnd:
-                  return await respuesta(
-                      'Pregunta', 'Seguro desea Eliminar el Registro');
+            switch (dismissDirection) {
+              case DismissDirection.startToEnd:
+                return await respuesta(
+                    'Pregunta', 'Seguro desea Eliminar el Registro');
 
-                case DismissDirection.horizontal:
-                case DismissDirection.vertical:
-                case DismissDirection.up:
-                case DismissDirection.down:
-                case DismissDirection.endToStart:
-                  assert(false);
-                case DismissDirection.none:
-                // TODO: Handle this case.
-              }
+              case DismissDirection.horizontal:
+              case DismissDirection.vertical:
+              case DismissDirection.up:
+              case DismissDirection.down:
+              case DismissDirection.endToStart:
+                assert(false);
+              case DismissDirection.none:
+              // TODO: Handle this case.
             }
+
             return null;
           },
           key: UniqueKey(),
@@ -268,10 +266,10 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
             }
           },
           child: Tarjeta(lista[i]));
+    } else {
+      return Tarjeta(lista[i]);
     }
-    }catch(e ){
-        print('Something really unknown: $e');
-    }
+    // }
   }
 
   Future<bool> respuesta(title, String mensaje) async {
@@ -319,7 +317,8 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
           ],
         ),
         onTap: () {
-          if (r.estado.toLowerCase() == 'entregada') {
+          if (r.estado.toLowerCase() == 'entregada' ||
+              r.estado.toLowerCase() == 'no_recibida') {
           } else {
             Navigator.push(
                 context,
@@ -448,6 +447,30 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
                   Expanded(
                     child: Text(
                         '${r.empleadoAsignado!.nombre} ${r.empleadoAsignado!.apellido}',
+                        style: const TextStyle(
+                            fontFamily: 'Lato', fontSize: 18.00)),
+                  ),
+                ],
+              ),
+              //]
+            ],
+            if (r.estado.toLowerCase() == "entregada" ||
+                r.estado.toLowerCase() == "no_recibida") ...[
+              //if (singleton.perfilUsuario == 'EMPLEADO') ...[
+              const SizedBox(height: 10),
+              const Text(
+                'Estado',
+                style: TextStyle(
+                    fontFamily: 'Lato',
+                    fontStyle: FontStyle.normal,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold),
+              ),
+              Row(
+                children: [
+                  //const Icon(Icons.prodct),
+                  Expanded(
+                    child: Text(r.estado,
                         style: const TextStyle(
                             fontFamily: 'Lato', fontSize: 18.00)),
                   ),

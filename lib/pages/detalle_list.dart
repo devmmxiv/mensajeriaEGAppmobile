@@ -60,7 +60,7 @@ class DetalleListWidget extends StatelessWidget {
           const SizedBox(
             height: 10,
           ),
-          CardTelefono(recoleccion,singleton),
+          CardTelefono(recoleccion, singleton),
           const SizedBox(
             height: 10,
           ),
@@ -127,7 +127,7 @@ class DetalleListWidget extends StatelessWidget {
                                   respuesta(
                                       context,
                                       'Confirmacion',
-                                      'La Recoleccion ya esta marcada com Entregada, no se puede cambiar el estado.',
+                                      'La Recoleccion ya esta marcada como Entregada, no se puede cambiar el estado.',
                                       true);
                                   return;
                                 }
@@ -140,13 +140,13 @@ class DetalleListWidget extends StatelessWidget {
                                       false)) {
                                     updateEstadoRecoleccion(
                                         recoleccion.id, 'recolectada');
-                                   if (context.mounted) {
+                                    if (context.mounted) {
                                       Navigator.pop(
                                         context,
                                         ListPage.ROUTE,
                                       );
                                     }
-                                   /* Operation.instance
+                                    /* Operation.instance
                                       .updateEstado(
                                           'recolectada', recoleccion.id)
                                       .then((x) => {
@@ -154,10 +154,21 @@ class DetalleListWidget extends StatelessWidget {
                                           });*/
                                   }
                                 } else {
-                                  if (await respuesta(context, 'Pregunta',
-                                      'Seguro ya entrego el paquete', false)) {
-                                    updateEstadoRecoleccion(
-                                        recoleccion.id, 'entregada');
+                                  if (await respuesta(
+                                      context,
+                                      'Pregunta',
+                                      'Seguro visito al cliente para entrega de  paquete?',
+                                      false)) {
+                                    if (context.mounted) {
+                                      if (await respuesta(context, 'Pregunta',
+                                          'El Paquete Fue Recibido?', false)) {
+                                        updateEstadoRecoleccion(
+                                            recoleccion.id, 'entregada');
+                                      } else {
+                                        updateEstadoRecoleccion(
+                                            recoleccion.id, 'no_recibida');
+                                      }
+                                    }
                                     if (context.mounted) {
                                       Navigator.pop(
                                         context,
@@ -314,8 +325,7 @@ class DetalleListWidget extends StatelessWidget {
   }
 
   // ignore: non_constant_identifier_names
-  Widget CardTelefono(Recoleccion recoleccion,UserLogeado singleton) {
-
+  Widget CardTelefono(Recoleccion recoleccion, UserLogeado singleton) {
     return Card(
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.zero,
@@ -335,11 +345,11 @@ class DetalleListWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 const Text('Numero de Telefono'),
-                if (singleton.perfilUsuario!="EMPLEADO") ...[
+                if (singleton.perfilUsuario != "EMPLEADO") ...[
                   Text(recoleccion.telefonoRecibe,
                       style: const TextStyle(
                           fontStyle: FontStyle.italic, fontSize: 24.00))
-                ] 
+                ]
               ],
             ),
           ),
@@ -350,7 +360,6 @@ class DetalleListWidget extends StatelessWidget {
 
   // ignore: non_constant_identifier_names
   Widget CardFormaPago(Recoleccion recoleccion) {
-
     if (recoleccion.estado.toLowerCase() == 'recolectada') {
       return Card(
         shape: const RoundedRectangleBorder(

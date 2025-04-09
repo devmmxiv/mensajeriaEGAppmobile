@@ -25,6 +25,7 @@ class MensajeriaApp extends StatelessWidget {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           initialRoute: LoginPage.ROUTE,
+        
           routes: {
             MainPage.ROUTE: (_) => const MainPage(),
             LoginPage.ROUTE: (_) => const LoginPage(),

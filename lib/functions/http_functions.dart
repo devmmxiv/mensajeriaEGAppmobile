@@ -192,3 +192,27 @@ Future<String> dataUser(String token) async {
     return "";
   }
 }
+
+Future<bool> updateContrasena(String user, String password) async {
+  bool dato = false;
+
+//no se a asigando ningun empleado
+
+  //String server = dotenv.env['SERVER'].toString();
+  try {
+    final response = await http.patch(getUri('/api/v1/usuario/updatepassword'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({"username": user, "password": password})
+        //  body: jsonEncode(recoleccion.toMap()),
+        );
+
+    if (response.statusCode == 200) {
+      dato = true;
+    }
+  } catch (e) {
+    dato = false;
+  }
+  return dato;
+}

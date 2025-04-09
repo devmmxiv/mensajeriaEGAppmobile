@@ -24,6 +24,7 @@ class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
   // SharedPreferences? _prefs;
   String mensaje = "";
+  bool bandera = false;
   @override
   void initState() {
     cargarPreferencias();
@@ -43,81 +44,90 @@ class _LoginPageState extends State<LoginPage> {
         child: FormBuilder(
           key: _formKey,
           child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  child: Image.asset('assets/images/logoEyG.jpg'),
+            child:
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                child: Image.asset('assets/images/logoEyG.jpg'),
+              ),
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: FormCustomWidget(
+                  name: 'user',
+                  obscureText: false,
+                  hintText: 'Usuario',
+                  icon: Icons.person,
+                  keyboardType: TextInputType.text,
+                  validator: FormBuilderValidators.compose([
+                    FormBuilderValidators.required(
+                        checkNullOrEmpty: true, errorText: 'Usuario Requerido'),
+                    FormBuilderValidators.minLength(4,
+                        errorText: 'Minimo 4 Caracteres')
+                  ]),
                 ),
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: FormCustomWidget(
-                    name: 'user',
-                    obscureText: false,
-                    hintText: 'Usuario',
-                    icon: Icons.person,
-                    keyboardType: TextInputType.text,
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(
-                          checkNullOrEmpty: true,
-                          errorText: 'Usuario Requerido'),
-                      FormBuilderValidators.minLength(4,
-                          errorText: 'Minimo 4 Caracteres')
-                    ]),
-                  ),
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: FormCustomWidget(
+                  name: 'password',
+                  obscureText: true,
+                  hintText: 'Contraseña',
+                  icon: Icons.lock,
+                  keyboardType: TextInputType.text,
+                  validator: FormBuilderValidators.compose([
+                    FormBuilderValidators.required(
+                        checkNullOrEmpty: true,
+                        errorText: 'Contraseña Requerido'),
+                    FormBuilderValidators.minLength(4,
+                        errorText: 'Minimo 4 Caracteres')
+                  ]),
                 ),
-                const SizedBox(
-                  height: 15,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: FormCustomWidget(
-                    name: 'password',
-                    obscureText: true,
-                    hintText: 'Contraseña',
-                    icon: Icons.lock,
-                    keyboardType: TextInputType.text,
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(
-                          checkNullOrEmpty: true,
-                          errorText: 'Contraseña Requerido'),
-                      FormBuilderValidators.minLength(4,
-                          errorText: 'Minimo 4 Caracteres')
-                    ]),
-                  ),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                OutlinedButton(
-                    onPressed: () async {
-                      _formKey.currentState?.save();
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              OutlinedButton(
+                  onPressed: () async {
+                    _formKey.currentState?.save();
 
-                      if (_formKey.currentState?.validate() == true) {
-                        final v = _formKey.currentState?.value;
+                    if (_formKey.currentState?.validate() == true) {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          });
+                      final v = _formKey.currentState?.value;
+                      bandera = true;
+                      String user = v?['user'];
+                      String pwd = v?['password'];
 
-                        String user = v?['user'];
-                        String pwd = v?['password'];
-                        bool dato = await validarUsuario(user, pwd);
+                      bool dato = await validarUsuario(user, pwd);
+                      if (context.mounted) {
+                        Navigator.of(context).pop();
+                      }
 
-                        if (dato) {
-                          if (context.mounted) {
-                            Navigator.pushReplacementNamed(
-                                context, MainPage.ROUTE);
-                          }
-                        } else {
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(SnackBar(content: Text(mensaje)));
-                          }
+                      if (dato) {
+                        if (context.mounted) {
+                          Navigator.pushReplacementNamed(
+                              context, MainPage.ROUTE);
+                        }
+                      } else {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(SnackBar(content: Text(mensaje)));
                         }
                       }
-                    },
-                    child: const Text('Iniciar Sesion'))
-              ],
-            ),
+                    }
+                  },
+                  child: const Column(children: [
+                    Text("Iniciar Sesion"),
+                  ]))
+            ]),
           ),
         ),
       )),
@@ -126,11 +136,10 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<bool> validarUsuario(String user, String pwd) async {
     setState(() {
-        mensaje = "usuario/contraseña invalidos";
-      });
+      mensaje = "usuario/contraseña invalidos";
+    });
     var token = await login(user, pwd);
     if (token.isEmpty) {
-      
       return false;
     } else {
       try {
@@ -165,13 +174,12 @@ class _LoginPageState extends State<LoginPage> {
           }
 
           // Set data through the singleton instance.
-        } 
+        }
         return loginValidado.estado;
       } catch (error) {
         setState(() {
-        mensaje = error.toString();
-      });
-        
+          mensaje = error.toString();
+        });
 
         return false;
       }

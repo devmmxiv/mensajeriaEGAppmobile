@@ -1,0 +1,2 @@
+D:/Proyectos/SERVICIOSEYG/mobile_app_mensajeria/android/app/.cxx/RelWithDebInfo/41t3h4b5/x86/CMakeFiles/edit_cache.dir
+D:/Proyectos/SERVICIOSEYG/mobile_app_mensajeria/android/app/.cxx/RelWithDebInfo/41t3h4b5/x86/CMakeFiles/rebuild_cache.dir
