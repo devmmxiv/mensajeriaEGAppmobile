@@ -72,7 +72,6 @@ class Recoleccion {
             ? Empleado()
             : Empleado.fromJson(json['empleadoAsignado']);
 }
-
 class RecoleccionInsert {
   int id;
   String fechaCreacion; //": "2024-09-26T16:17:08.328Z",
@@ -139,30 +138,44 @@ class RecoleccionInsert {
         municipioRecibe = Municipio.fromJson(json['municipioRecibe']),
         clienteEnvia = ClienteInsert.fromJson(json['clienteEnvia']);
 }
+
 class CabeceraRecoleccion {
   int cantidad;
-    Cliente clienteEnvia;
+  int id;
+  String nombre;
+  String apellido;
+  String telefono;
+  String direccion;
+  String zona;
+  String municipio;
 
-
-  CabeceraRecoleccion(
-    this.cantidad,
-    this.clienteEnvia,
-  );
+  CabeceraRecoleccion(this.cantidad, this.id, this.nombre, this.apellido,
+      this.telefono, this.direccion, this.zona, this.municipio);
 
   Map<String, dynamic> toMap() {
     return {
       'cantidad': cantidad,
-   
-      'clienteEnvia': clienteEnvia.toMap(),
-  
+      'id': id,
+      'nombre': nombre,
+      'apellido': apellido,
+      'telefono': telefono,
+      'direccion': direccion,
+      'zona': zona,
+      'municipio': municipio
     };
   }
 
   CabeceraRecoleccion.fromJson(Map<String, dynamic> json)
-      : cantidad = json['cantidad'] as int,
- 
-        clienteEnvia = Cliente.fromJson(json['clienteEnvia']);
+      : cantidad = json['cantidad'],
+        id = json['id'],
+        nombre = json['nombre'],
+        apellido = json['apellido'],
+        telefono = json['telefono'],
+        direccion = json['direccion'],
+        zona = json['zona'],
+        municipio = json['apellido'];
 }
+
 class ClienteInsert {
   int? id;
 
@@ -188,13 +201,16 @@ class Cliente {
   String? nombre;
   String? apellido;
   String? telefono;
-  List<Direccion> direcciones;
+  List<Direccion> ?direcciones;
+
   Cliente(
       {this.id,
       this.nombre,
       this.apellido,
       this.telefono,
-      required this.direcciones});
+
+      this.direcciones  
+      });
 
   Map<String, dynamic> toMap() {
     return {
@@ -202,21 +218,24 @@ class Cliente {
       'nombre': nombre,
       'apellido': apellido,
       'telefono': telefono,
-      'direcciones': direcciones.map((item) => item.toMap()).toList()
+      'direcciones': direcciones!.map((item) => item.toMap()).toList(),
+    
     };
   }
 
   factory Cliente.fromJson(Map<String, dynamic> json) {
     return Cliente(
-        id: json['id'],
-        nombre: json['nombre'],
-        apellido: json['apellido'],
-        telefono: json['telefono'],
-        direcciones: List<dynamic>.from(json['direcciones'])
-            .map((i) => Direccion.fromJson(i))
-            .toList());
+    id:  json['id'],
+     nombre: json['nombre'],
+     apellido: json['apellido'],
+     telefono: json['telefono'],
+     direcciones: List<dynamic>.from(json['direcciones'])
+          .map((i) => Direccion.fromJson(i))
+          .toList(),
+    );
   }
 }
+
 
 class Empleado {
   int? id;

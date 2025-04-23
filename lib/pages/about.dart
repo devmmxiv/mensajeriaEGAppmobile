@@ -36,6 +36,6 @@ class About extends StatelessWidget {
           ],
         ));
 
-    ;
+    
   }
 }

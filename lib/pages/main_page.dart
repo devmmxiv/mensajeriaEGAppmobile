@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app_mensajeria/models/login_model.dart';
 import 'package:mobile_app_mensajeria/pages/about.dart';
-import 'package:mobile_app_mensajeria/pages/list_page.dart';
+import 'package:mobile_app_mensajeria/pages/lista_http_page.dart';
 import 'package:mobile_app_mensajeria/pages/login.dart';
 import 'package:mobile_app_mensajeria/pages/profile_page.dart';
 
@@ -20,9 +20,8 @@ class _MainPageState extends State<MainPage> {
   late UserLogeado singleton;
   @override
   void initState() {
-    singleton = UserLogeado();
-
     super.initState();
+    singleton = UserLogeado();
   }
 
   void handleClick(int item) {
@@ -38,14 +37,14 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     up = !up;
     usuario = singleton.getUser();
-
-    final screens = [const ListPage(), const About()];
+//se pone test para probar recolecciones desde clientes
+    final screens = [const ListPageTest(), const About()];
     final colors = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
           foregroundColor: Colors.white,
           title: const Text(
-            "Mensajeria EyG",
+            "Mensajeria EG",
             style: TextStyle(fontFamily: 'Lato', fontSize: 18.00),
           ),
           backgroundColor: colors.primary,

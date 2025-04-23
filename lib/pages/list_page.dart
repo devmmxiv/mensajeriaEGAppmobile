@@ -33,12 +33,17 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
   // final refreshKey = GlobalKey<FormState>();
   late UserLogeado singleton;
   late Future<List<Recoleccion>> recolecciones;
+
   bool isInternet = true;
 
   @override
   void initState() {
     super.initState();
     singleton = UserLogeado();
+    // if (singleton.perfilUsuario == "EMPLEADO" && !singleton.isAdministrador) {
+    //_loadEncabezado();
+
+    // }
 
     _loadData();
   }
@@ -113,7 +118,6 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
                     List<Recoleccion> temp1 = [];
                     List<Recoleccion> temp2 = [];
                     try {
-                      
                       for (var e in temp) {
                         if (e.estado.toLowerCase() == 'entregada' ||
                             e.estado.toLowerCase() == 'no_recibida') {
@@ -142,6 +146,7 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
                                     fontWeight: FontWeight.normal),
                               ),
                               Expanded(child: listViewRecolecciones(temp0)),
+                              //Expanded(child: listViewEncabezados())
                             ],
                           ),
                         ),
@@ -217,12 +222,7 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
   }
 
   _createItem(int i, List<Recoleccion> lista) {
-    /* if (UserLogeado().perfilUsuario == "EMPLEADO" &&
-        !UserLogeado().isAdministrador) {
-  
 
-      return Tarjeta(lista[i]);
-    } else {*/
     if (singleton.perfilUsuario == "ADMINISTRADOR") {
       return Dismissible(
           confirmDismiss: (DismissDirection dismissDirection) async {
@@ -308,9 +308,9 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
               ]),
               Fila(
                   r.estado,
-                  r.clienteEnvia.direcciones.first.direccionCompleta!,
+                  r.clienteEnvia.direcciones!.first.direccionCompleta!,
                   const Icon(Icons.location_on)),
-              Fila(r.estado, r.clienteEnvia.direcciones.first.municipio.nombre!,
+              Fila(r.estado, r.clienteEnvia.direcciones!.first.municipio.nombre!,
                   const Icon(Icons.check)),
               const SizedBox(height: 10)
             ],
@@ -558,4 +558,74 @@ class _ListRecoleccionesState extends State<_ListRecolecciones> {
     }
     return TextStyle(fontSize: fontSize, color: color);
   }
+
+//encabezado
+  Widget listViewEncabezados() {
+    List<CabeceraRecoleccion> lista = [];
+    return RefreshIndicator(
+        key: UniqueKey(),
+        onRefresh: _loadData,
+        child: ListView.builder(
+            padding: const EdgeInsets.all(5),
+            itemCount: lista.length,
+            itemBuilder: (_, i) => _createItemCabecera(i, lista)));
+    //_createItem(i, lista));
+  }
+
+  _createItemCabecera(int i, List<CabeceraRecoleccion> lista) {
+    return TarjetaCabecera(lista[i]);
+  }
+
+  Widget TarjetaCabecera(CabeceraRecoleccion r) {
+    return Card(
+      color: Colors.white70,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      child: ListTile(
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Cliente Envia',
+              style: TextStyle(
+                  fontFamily: 'Lato',
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
+            ),
+            Row(children: [
+              const Icon(Icons.person),
+              //const Text('Persona Envia'),
+              Expanded(
+                child: Text('${r.nombre} ${r.apellido}',
+                    style:
+                        const TextStyle(fontFamily: 'Lato', fontSize: 18.00)),
+              ),
+            ]),
+            Fila("creada", r.direccion, const Icon(Icons.location_on)),
+            Fila("creada", r.zona, const Icon(Icons.location_on)),
+            Fila("creada", r.municipio, const Icon(Icons.check)),
+            const SizedBox(height: 10)
+          ],
+        ),
+        onTap: () {
+          /*Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DetalleListWidget(
+                          recoleccion: r, //, recolecciones[i],
+                          onChangeEstado: () {
+                            // setState(() {
+                            // _loadData();
+                            //});
+                          },
+                        ))).then((value) => setState(() {
+                  _loadData();
+                }));*/
+        },
+      ),
+    );
+  }
+
+  ///
 }

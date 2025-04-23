@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app_mensajeria/functions/http_recoleccion.dart';
+import 'package:mobile_app_mensajeria/models/cliente_recoleccion_entrega_model.dart';
 import 'package:mobile_app_mensajeria/models/login_model.dart';
-import 'package:mobile_app_mensajeria/models/recoleccion_model.dart';
+
 import 'package:mobile_app_mensajeria/pages/list_page.dart';
-import 'package:mobile_app_mensajeria/pages/lista_http_page.dart';
 import 'package:mobile_app_mensajeria/pages/show_message_page.dart';
 
-class DetalleListWidget extends StatelessWidget {
-  const DetalleListWidget(
+class DetalleRecoleccionEntregaWidget extends StatelessWidget {
+  const DetalleRecoleccionEntregaWidget(
       {super.key, required this.recoleccion, required this.onChangeEstado});
-  final Recoleccion recoleccion;
+  final RecoleccionEntrega recoleccion;
   final void Function() onChangeEstado;
 
   @override
@@ -40,7 +40,7 @@ class DetalleListWidget extends StatelessWidget {
   }
 
   // ignore: non_constant_identifier_names
-  Widget ListViewDetalle(Recoleccion recoleccion, String tituloBoton,
+  Widget ListViewDetalle(RecoleccionEntrega recoleccion, String tituloBoton,
       BuildContext context, UserLogeado singleton) {
     if (recoleccion.estado.toLowerCase() == 'entregada') {
       return Container();
@@ -147,7 +147,12 @@ class DetalleListWidget extends StatelessWidget {
                                         ListPage.ROUTE,
                                       );
                                     }
-                             
+                                    /* Operation.instance
+                                      .updateEstado(
+                                          'recolectada', recoleccion.id)
+                                      .then((x) => {
+                                            if (x == 1) {onChangeEstado()}
+                                          });*/
                                   }
                                 } else {
                                   if (await respuesta(
@@ -168,9 +173,14 @@ class DetalleListWidget extends StatelessWidget {
                                     if (context.mounted) {
                                       Navigator.pop(
                                         context,
-                                        ListPageTest.ROUTE,
+                                        ListPage.ROUTE,
                                       );
                                     }
+                                    /* Operation.instance
+                                      .updateEstado('entregada', recoleccion.id)
+                                      .then((x) => {
+                                            if (x == 1) {onChangeEstado()}
+                                          });*/
                                   }
                                 }
                               },
@@ -211,7 +221,7 @@ class DetalleListWidget extends StatelessWidget {
   }
 
   // ignore: non_constant_identifier_names
-  Widget CardNombre(Recoleccion recoleccion) {
+  Widget CardNombre(RecoleccionEntrega recoleccion) {
     return Card(
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.zero,
@@ -231,26 +241,16 @@ class DetalleListWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 const Text('Datos Personales'),
-                if (recoleccion.estado.toLowerCase() == 'creada') ...[
-                  Text(recoleccion.clienteEnvia.nombre!,
-                      style: const TextStyle(
-                          fontStyle: FontStyle.italic, fontSize: 24.00)),
-                  Text(recoleccion.clienteEnvia.apellido!,
-                      style: const TextStyle(
-                          decorationStyle: TextDecorationStyle.dotted,
-                          fontStyle: FontStyle.italic,
-                          fontSize: 18.00)),
-                ] else ...[
-                  //recibe
-                  Text(recoleccion.nombreRecibe,
-                      style: const TextStyle(
-                          fontStyle: FontStyle.italic, fontSize: 24.00)),
-                  Text(recoleccion.apellidoRecibe,
-                      style: const TextStyle(
-                          decorationStyle: TextDecorationStyle.dotted,
-                          fontStyle: FontStyle.italic,
-                          fontSize: 18.00)),
-                ],
+
+                //recibe
+                Text(recoleccion.nombreRecibe,
+                    style: const TextStyle(
+                        fontStyle: FontStyle.italic, fontSize: 24.00)),
+                Text(recoleccion.apellidoRecibe,
+                    style: const TextStyle(
+                        decorationStyle: TextDecorationStyle.dotted,
+                        fontStyle: FontStyle.italic,
+                        fontSize: 18.00)),
               ],
             ),
           ),
@@ -260,7 +260,7 @@ class DetalleListWidget extends StatelessWidget {
   }
 
   // ignore: non_constant_identifier_names
-  Widget CardDireccion(Recoleccion recoleccion) {
+  Widget CardDireccion(RecoleccionEntrega recoleccion) {
     return Card(
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.zero,
@@ -280,34 +280,17 @@ class DetalleListWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 const Text('Direccion'),
-                if (recoleccion.estado.toLowerCase() == 'creada') ...[
-                  Text(
-                      recoleccion
-                          .clienteEnvia.direcciones![0].direccionCompleta!,
-                      style: const TextStyle(
-                          fontStyle: FontStyle.italic, fontSize: 24.00)),
-                  Text("Zona ${recoleccion.clienteEnvia.direcciones![0].zona!}",
-                      style: const TextStyle(
-                          fontStyle: FontStyle.italic, fontSize: 24.00)),
-                  Text(
-                      recoleccion
-                          .clienteEnvia.direcciones![0].municipio.nombre!,
-                      style: const TextStyle(
-                          decorationStyle: TextDecorationStyle.dotted,
-                          fontStyle: FontStyle.normal,
-                          fontSize: 18.00)),
-                ] else ...[
-                  //recibe
-                  Text(recoleccion.direccionEntrega,
-                      style: const TextStyle(
-                          fontStyle: FontStyle.italic, fontSize: 24.00)),
 
-                  Text(recoleccion.municipioRecibe.nombre!,
-                      style: const TextStyle(
-                          decorationStyle: TextDecorationStyle.dotted,
-                          fontStyle: FontStyle.italic,
-                          fontSize: 18.00)),
-                ],
+                //recibe
+                Text(recoleccion.direccionEntrega,
+                    style: const TextStyle(
+                        fontStyle: FontStyle.italic, fontSize: 24.00)),
+
+                Text(recoleccion.municipioRecibe.nombre!,
+                    style: const TextStyle(
+                        decorationStyle: TextDecorationStyle.dotted,
+                        fontStyle: FontStyle.italic,
+                        fontSize: 18.00)),
               ],
             ),
           ),
@@ -317,7 +300,7 @@ class DetalleListWidget extends StatelessWidget {
   }
 
   // ignore: non_constant_identifier_names
-  Widget CardTelefono(Recoleccion recoleccion, UserLogeado singleton) {
+  Widget CardTelefono(RecoleccionEntrega recoleccion, UserLogeado singleton) {
     return Card(
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.zero,
@@ -337,11 +320,9 @@ class DetalleListWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 const Text('Numero de Telefono'),
-                if (singleton.perfilUsuario != "EMPLEADO") ...[
-                  Text(recoleccion.telefonoRecibe,
-                      style: const TextStyle(
-                          fontStyle: FontStyle.italic, fontSize: 24.00))
-                ]
+                Text(recoleccion.telefonoRecibe,
+                    style: const TextStyle(
+                        fontStyle: FontStyle.italic, fontSize: 24.00))
               ],
             ),
           ),
@@ -351,7 +332,7 @@ class DetalleListWidget extends StatelessWidget {
   }
 
   // ignore: non_constant_identifier_names
-  Widget CardFormaPago(Recoleccion recoleccion) {
+  Widget CardFormaPago(RecoleccionEntrega recoleccion) {
     if (recoleccion.estado.toLowerCase() == 'recolectada') {
       return Card(
         shape: const RoundedRectangleBorder(
